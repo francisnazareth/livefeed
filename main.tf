@@ -113,6 +113,13 @@ resource "azurerm_route_table" "rt-default-np-firewall" {
     next_hop_type               = "VirtualAppliance"
     next_hop_in_ip_address      = var.firewall-private-ip
   }
+  
+  route {
+    name                        = "route_peered_vnet_traffic_to_nva"
+    address_prefix              = var.hub-vnet-address-space
+    next_hop_type               = "VirtualAppliance"
+    next_hop_in_ip_address      = var.firewall-private-ip    
+  }
 
   route {
     name                        = "route_all_traffic_to_nva"
@@ -139,6 +146,21 @@ resource "azurerm_route_table" "rt-acquisition-np-firewall" {
     address_prefix              = var.aks-acquisition-subnet-address-space
     next_hop_type               = "VnetLocal"
   }
+  
+  route {
+    name                        = "route_vnet_traffic_to_nva"
+    address_prefix              = var.spoke-vnet-address-space
+    next_hop_type               = "VirtualAppliance"
+    next_hop_in_ip_address      = var.firewall-private-ip
+  }
+  
+  route {
+    name                        = "route_peered_vnet_traffic_to_nva"
+    address_prefix              = var.hub-vnet-address-space
+    next_hop_type               = "VirtualAppliance"
+    next_hop_in_ip_address      = var.firewall-private-ip    
+  }
+
 
   route {
     name                        = "route_all_traffic_to_fw"
@@ -164,6 +186,20 @@ resource "azurerm_route_table" "rt-imageprocessing-np-firewall" {
     name                        = "route_default_np_traffic_in_subnet"
     address_prefix              = var.aks-imageprocessing-subnet-address-space
     next_hop_type               = "VnetLocal"
+  }
+  
+  route {
+    name                        = "route_vnet_traffic_to_nva"
+    address_prefix              = var.spoke-vnet-address-space
+    next_hop_type               = "VirtualAppliance"
+    next_hop_in_ip_address      = var.firewall-private-ip
+  }
+  
+  route {
+    name                        = "route_peered_vnet_traffic_to_nva"
+    address_prefix              = var.hub-vnet-address-space
+    next_hop_type               = "VirtualAppliance"
+    next_hop_in_ip_address      = var.firewall-private-ip    
   }
 
   route {
