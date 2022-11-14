@@ -106,9 +106,16 @@ resource "azurerm_route_table" "rt-default-np-firewall" {
     address_prefix              = var.aks-default-subnet-address-space
     next_hop_type               = "VnetLocal"
   }
+  
+  route {
+    name                        = "route_vnet_traffic_to_nva"
+    address_prefix              = var.spoke-vnet-address-space
+    next_hop_type               = "VirtualAppliance"
+    next_hop_in_ip_address      = var.firewall-private-ip
+  }
 
   route {
-    name                        = "route_all_traffic_to_fw"
+    name                        = "route_all_traffic_to_nva"
     address_prefix              = "0.0.0.0/0"
     next_hop_type               = "VirtualAppliance"
     next_hop_in_ip_address      = var.firewall-private-ip
