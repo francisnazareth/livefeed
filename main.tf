@@ -142,8 +142,6 @@ resource "azurerm_kubernetes_cluster" "private-aks" {
   resource_group_name        = azurerm_resource_group.spoke-rg.name
   dns_prefix                 = "aks-${var.customer-name}-web"
   private_cluster_enabled    = true
-  oidc_issuer_enabled        = true
-  workload_identity_enabled  = true
   
   sku_tier            = "Paid"
   node_resource_group = "rg-aksnode-${var.customer-name}-${var.env-prefix}-${var.location-prefix}-01"
