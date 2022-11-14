@@ -229,3 +229,50 @@ resource "azurerm_subnet_route_table_association" "aks-acquisition-subnet-to-rou
   subnet_id      = azurerm_subnet.aks-acquisition-nodepool-subnet.id
   route_table_id = azurerm_route_table.rt-acquisition-np-firewall.id
 }
+
+resource "azurerm_kubernetes_cluster" "private-aks" {
+  name                       = "aks-${var.customer-name}-${var.env-prefix}-${var.location-prefix}-01"
+  location                   = var.location
+  resource_group_name        = azurerm_resource_group.spoke-rg.name
+  dns_prefix                 = "aks-${var.customer-name}-web"
+  private_cluster_enabled    = true
+  
+  sku_tier            = "Paid"
+  node_resource_group = "rg-aksnode-${var.customer-name}-${var.env-prefix}-${var.location-prefix}-01"
+
+  default_node_pool {
+    name       = "systempool"
+    node_count = 3
+    max_pods   = 30
+    os_disk_size_gb = 128
+    os_disk_type = "Managed"
+    zones = [1, 2, 3]
+    vm_size        = var.aks-system-nodepool-vm-size
+    vnet_subnet_id = azurerm_subnet.aks-default-nodepool-subnet.id
+    type           = "VirtualMachineScaleSets" 
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  network_profile {
+    network_plugin       = "azure"
+    network_policy       = "calico"
+    load_balancer_sku    = "standard"
+    outbound_type        = "userDefinedRouting"  
+    dns_service_ip       = "172.17.192.10"
+    docker_bridge_cidr   = "172.17.196.0/24"
+    service_cidr         = "172.17.192.0/22" 
+  }
+
+  oms_agent {
+    log_analytics_workspace_id = var.la-workspace-resource-id
+  }  
+  
+  tags = {
+    Environment  = var.environment,
+    CreatedBy    = var.createdby,
+    CreationDate = var.creationdate
+  }
+}
