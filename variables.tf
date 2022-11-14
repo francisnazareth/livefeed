@@ -5,6 +5,7 @@ variable env-prefix {}
 variable environment {}
 variable createdby {}
 variable creationdate {}
+variable hub-vnet-address-space {}
 variable spoke-vnet-address-space {}
 variable aks-default-subnet-address-space {}
 variable aks-acquisition-subnet-address-space {}
